@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Heart Disease Predictor</title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script>
+		$(document).ready(function() {
+			$('form').on('submit', function(event) {
+				event.preventDefault(); // Prevent form submission
+
+				// Collect form data
+				var formData = $(this).serialize();
+
+				// Make an AJAX request
+				$.ajax({
+					url: 'http://127.0.0.1/myapp/wp-json/myplugin/v1/submit_form',
+					method: 'POST',
+					data: formData,
+					dataType: 'json',
+					success: function(response) {
+						// Format the response data for display
+						var formattedResponse = formatResponseData(response);
+
+						// Display the formatted response on the page
+						$('#result').html(formattedResponse);
+					},
+					error: function(xhr, status, error) {
+						// Display an error message
+						$('#result').text('Error: ' + error);
+					}
+				});
+			});
+
+			// Function to format the response data for display
+			function formatResponseData(response) {
+				var formattedData = '';
+
+				// Iterate over each key-value pair in the response object
+				for (var key in response) {
+					if (response.hasOwnProperty(key)) {
+						var value = response[key];
+
+						// Check if the value is an object (nested JSON)
+						if (typeof value === 'object' && value !== null) {
+							// Format the nested object recursively
+							formattedData += '<strong>' + key + '</strong>:<br>' + formatResponseData(value);
+						} else {
+							// Add the key and value to the formatted data
+							formattedData += '<strong>' + key + '</strong>: ' + value + '<br>';
+						}
+					}
+				}
+
+				return formattedData;
+			}
+		});
+	</script>
+</head>
+<body>
+	<h2>Enter your Details for Prediction</h2>
+	<form>
+		<label for="age">Age:</label>
+		<input type="text" id="age" name="age" required><br>
+
+		<label for="sex">Sex:</label>
+		<select id="sex" name="sex" required>
+			<option value="0">Female</option>
+			<option value="1">Male</option>
+		</select><br>
+
+		<label for="cp">Chest Pain Type:</label>
+		<select id="cp" name="cp" required>
+			<option value="1">Typical Angina</option>
+			<option value="2">Atypical Angina</option>
+			<option value="3">Non-Anginal Pain</option>
+			<option value="4">Asymptomatic</option>
+		</select><br>
+
+		<label for="trestbps">Resting Blood Pressure:</label>
+		<input type="text" id="trestbps" name="trestbps" required><br>
+
+		<label for="chol">Cholesterol:</label>
+		<input type="text" id="chol" name="chol" required><br>
+
+		<label for="fbs">Fasting Blood Sugar:</label>
+		<select id="fbs" name="fbs" required>
+			<option value="0">Less Than 120mg/dl</option>
+			<option value="1">Greater Than or Equal to 120mg/dl</option>
+		</select><br>
+
+		<label for="restecg">Resting ECG:</label>
+		<select id="restecg" name="restecg" required>
+			<option value="0">Normal</option>
+			<option value="1">ST-T Wave Abnormality</option>
+			<option value="2">Left Ventricular Hypertrophy</option>
+		</select><br>
+
+		<label for="thalach">Maximum Heart Rate Achieved:</label>
+		<input type="text" id="thalach" name="thalach" required><br>
+
+		<label for="exang">Exercise Induced Angina:</label>
+		<select id="exang" name="exang" required>
+			<option value="0">No</option>
+			<option value="1">Yes</option>
+		</select><br>
+
+		<label for="oldpeak">ST Depression:</label>
+		<input type="text" id="oldpeak" name="oldpeak" required><br>
+
+		<label for="slope">Slope of Peak Exercise ST Segment:</label>
+		<select id="slope" name="slope" required>
+			<option value="0">Upsloping</option>
+			<option value="1">Flat</option>
+			<option value="2">Downsloping</option>
+		</select><br>
+
+		<label for="ca">Number of Major Vessels:</label>
+		<select id="ca" name="ca" required>
+			<option value="0">0</option>
+			<option value="1">1</option>
+			<option value="2">2</option>
+			<option value="3">3</option>
+		</select><br>
+
+		<label for="thal">Thal:</label>
+		<select id="thal" name="thal">
+			<option value="0">0</option>
+			<option value="1">1</option>
+			<option value="2">2</option>
+			<option value="3">3</option>
+			<option value="6">6</option>
+			<option value="7">7</option>
+		</select><br>
+		<br>
+
+		<input type="submit" value="Submit">
+	</form><br>
+	<br>
+
+	<div id="result"></div>
+</body>
+</html>
